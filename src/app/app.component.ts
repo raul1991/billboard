@@ -56,7 +56,7 @@ export class AppComponent {
     this.http.get(this.url, {
       headers: new HttpHeaders({ 'X-Vault-Token': this.token })
     }).subscribe((res) => {
-        this.result = JSON.stringify(res.data, null, 2);
+        this.result = JSON.stringify(res['data'], null, 2);
     }, (err) => {
         console.log(err);
         this.result = JSON.stringify(err.statusText);
@@ -67,7 +67,7 @@ export class AppComponent {
     this.http.get(this.url+"?list=true", {
       headers: new HttpHeaders({ 'X-Vault-Token': this.token })
     }).subscribe((res) => {
-        this.result = JSON.stringify(res.data.keys, null, 2);
+        this.result = JSON.stringify(res['data'].keys, null, 2);
     }, (err) => {
         this.result = JSON.stringify(err.statusText);
     });
