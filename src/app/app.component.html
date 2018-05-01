@@ -5,27 +5,37 @@
 <div class="container">
   <form>
     <div class="form-group">
-      <label for="exampleInputEmail1">Vault address</label>
+      <label for="exampleInputEmail1">Vault Base Url</label>
       <div class="row">
         <div class="col-10">
           <input type="url" class="form-control form-control-lg" name="vault_url" id="exampleInputEmail1" aria-describedby="emailHelp"
-          placeholder="Enter url" [value]="url" [(ngModel)]="url">
+          placeholder="Enter url" [value]="baseUrl" [(ngModel)]="baseUrl">
+          <small class="d-block mb-3 text-muted">Only edit your host address and port number</small>
         </div>
         <div class="col-2">
-          <!-- Example split danger button -->
           <div class="btn-group">
-            <button type="button" class="btn btn-primary btn-lg" (click)="performAction(action)">{{action}}</button>
+            <button type="button" class="btn btn-primary btn-lg" (click)="performAction(verb)">{{verb}}</button>
             <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <div class="dropdown-menu">
-              <a *ngFor="let action of actions" class="dropdown-item" href="#" [innerText]="action"
-              (click)="setAction(action)">{{action}}</a>
+              <a *ngFor="let verb of supportedVerbs" class="dropdown-item" href="#" [innerText]="verb" (click)="setAction(verb)">{{verb}}</a>
             </div>
           </div>
         </div>
       </div>
-      <small id="emailHelp" class="form-text text-muted"></small>
+    </div>
+    <div>
+      <label for="secret">Secret information</label>
+      <div class="row">
+        <div class="col-6">
+          <input type="text" id="secret" class="form-control form-control-lg" name="key" aria-describedby="key"
+          placeholder="Enter key" [value]="key" [(ngModel)]="key">
+        </div>
+        <div *ngIf="isPut()" class="col-6">
+          <input type="text" class="form-control form-control-lg" name="value" aria-describedby="value" placeholder="Enter value" [value]="value" [(ngModel)]="value">
+        </div>
+      </div>
     </div>
 
     <div class="form-group">
