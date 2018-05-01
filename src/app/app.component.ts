@@ -9,7 +9,8 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 })
 export class AppComponent {
   title = 'app';
-  baseUrl = 'http://127.0.0.1:8200/v1/secret/';
+  vaultVersion = "/v1/secret/"
+  baseUrl = 'http://127.0.0.1:8200';
   key; // used during a put request
   value; // used during a put request
   token;
@@ -26,7 +27,9 @@ export class AppComponent {
 
   performAction(selectedVerb: String) {
     this.result = "";
-    var secret = {key: this.getAbsolutePath(this.key)};
+    var secret = {
+      key: this.getAbsolutePath(this.key)
+    };
     switch (selectedVerb) {
       case "Get":
         this.doGet(secret);
@@ -48,7 +51,7 @@ export class AppComponent {
   }
   
   getAbsolutePath(relativePath: string) {
-    return this.removeTrailingSlashIfExists(this.baseUrl).concat("/").concat(relativePath);
+    return this.removeTrailingSlashIfExists(this.baseUrl).concat(this.vaultVersion).concat(relativePath);
   }
 
   removeTrailingSlashIfExists(path: string) {
