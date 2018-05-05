@@ -1,52 +1,63 @@
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
   <h5 class="my-0 mr-md-auto font-weight-normal">Vault Viewer</h5>
 </div>
-
 <div class="container">
-  <form>
-    <div class="form-group">
-      <label for="exampleInputEmail1">Vault Base Url</label>
-      <div class="row">
-        <div class="col-10">
-          <input type="url" class="form-control form-control-lg" name="vault_url" id="exampleInputEmail1" aria-describedby="emailHelp"
-          placeholder="Enter url" [value]="baseUrl" [(ngModel)]="baseUrl">
-        </div>
-        <div class="col-2">
-          <div class="btn-group">
-            <button type="button" class="btn btn-primary btn-lg" (click)="performAction(verb)">{{verb}}</button>
-            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <div class="dropdown-menu">
-              <a *ngFor="let verb of supportedVerbs" class="dropdown-item" href="#" [innerText]="verb" (click)="setAction(verb)">{{verb}}</a>
+  <div class="row">
+    <div class="col-3" [hidden]="requests.length === 0">
+      <label>Recent requests</label>
+      <ul class="list-group">
+        <li *ngFor="let request of requests" href="#" class="list-group-item">
+          <small class="float-left text-primary">/{{request.secret.key}}</small> <small class="float-right">[{{request.verb | uppercase}}]</small>
+        </li>
+      </ul>
+    </div>
+    <div class="col-9">
+      <form>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Vault Base Url</label>
+          <div class="row">
+            <div class="col-10">
+              <input type="url" class="form-control form-control-lg" name="vault_url" id="exampleInputEmail1" aria-describedby="emailHelp"
+              placeholder="Enter url" [value]="baseUrl" [(ngModel)]="baseUrl">
+            </div>
+            <div class="col-2">
+              <div class="btn-group">
+                <button type="button" class="btn btn-primary btn-lg" (click)="performAction(verb)">{{verb}}</button>
+                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                  <a *ngFor="let verb of supportedVerbs" class="dropdown-item" href="#" [innerText]="verb" (click)="setAction(verb)">{{verb}}</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div>
-      <label for="secret">Secret Information</label>
-      <div class="row">
-        <div class="col-6">
-          <input type="text" id="secret" class="form-control form-control-lg" name="key" aria-describedby="key"
-          placeholder="Enter key" [value]="key" [(ngModel)]="key">
+        <div>
+          <label for="secret">Secret Information</label>
+          <div class="row">
+            <div class="col-6">
+              <input type="text" id="secret" class="form-control form-control-lg" name="key" aria-describedby="key"
+              placeholder="Enter key" [value]="key" [(ngModel)]="key">
+            </div>
+            <div *ngIf="isPut()" class="col-6">
+              <input type="text" class="form-control form-control-lg" name="value" aria-describedby="value" placeholder="Enter value" [value]="value" [(ngModel)]="value">
+            </div>
+          </div>
         </div>
-        <div *ngIf="isPut()" class="col-6">
-          <input type="text" class="form-control form-control-lg" name="value" aria-describedby="value" placeholder="Enter value" [value]="value" [(ngModel)]="value">
-        </div>
-      </div>
-    </div>
 
-    <div class="form-group">
-      <label for="token">Vault token</label>
-      <input name="token" class="form-control" id="token" placeholder="Vault token" [value]="token" 
-      [(ngModel)]="token">
+        <div class="form-group">
+          <label for="token">Vault token</label>
+          <input name="token" class="form-control" id="token" placeholder="Vault token" [value]="token" 
+          [(ngModel)]="token">
+        </div>
+        <div class="form-group">
+          <label for="result">Query result</label>
+          <textarea class="form-control" id="result" rows="10">{{result}}</textarea>
+        </div>
+      </form>
     </div>
-    <div class="form-group">
-      <label for="result">Query result</label>
-      <textarea class="form-control" id="result" rows="10">{{result}}</textarea>
-    </div>
-  </form>
+  </div>
   <footer class="pt-4 my-md-5 pt-md-5 border-top">
     <div class="row">
       <div class="col-12 col-md">

@@ -16,97 +16,116 @@ export class AppComponent {
   token;
   headers;
   result;
+  requests = [];
   supportedVerbs = [
-    'Get',
-    'Put',
-    'List',
-    'Delete'
+  'Get',
+  'Put',
+  'List',
+  'Delete'
   ];
   verb: String = this.supportedVerbs[0];
   constructor(private http: HttpClient) { }
 
-  performAction(selectedVerb: String) {
+  prepareRequestObj(verb: string) {
+    return {
+      secret: {
+        key: this.key,
+        value: this.value
+      },
+      verb: verb,
+      url: this.getAbsolutePath(this.key),
+      headers: new HttpHeaders({ 'X-Vault-Token': this.token })
+    }
+  }
+  
+  performAction(selectedVerb: string) {
     this.result = "";
-    var secret = {
-      key: this.getAbsolutePath(this.key)
-    };
+    var request = this.prepareRequestObj(selectedVerb);
     switch (selectedVerb) {
       case "Get":
-        this.doGet(secret);
-        break;
+      this.doGet(request);
+      break;
       case "List":
-        this.doList(secret);
-        break;
+      this.doList(request);
+      break;
       case "Delete":
-        this.doDelete(secret);
-        break;
+      this.doDelete(request);
+      break;
       case "Put":
-        secret['value'] = this.value;
-        this.doPut(secret);
-        break;
+      request['value'] = this.value;
+      this.doPut(request);
+      break;
       default:
         // code...
         break;
+      }
     }
-  }
-  
-  getAbsolutePath(relativePath: string) {
-    return this.removeTrailingSlashIfExists(this.baseUrl).concat(this.vaultVersion).concat(relativePath);
-  }
 
-  removeTrailingSlashIfExists(path: string) {
-    if (path.endsWith("/")) {
-      var idx = path.lastIndexOf("/");
-      return path.substring(0, idx);
+    getAbsolutePath(relativePath: string) {
+      return this.removeTrailingSlashIfExists(this.baseUrl).concat(this.vaultVersion).concat(relativePath);
     }
-    return path;
-  }
 
-  doPut(secret) {
-    this.http.put(secret.key, {"value":secret.value}, {
-      headers: new HttpHeaders({ 'X-Vault-Token': this.token })
-    }).subscribe((res) => {
-        this.result = secret.value + " was saved with the key -> " + this.key;
-    }, (err) => {
+    removeTrailingSlashIfExists(path: string) {
+      if (path.endsWith("/")) {
+        var idx = path.lastIndexOf("/");
+        return path.substring(0, idx);
+      }
+      return path;
+    }
+
+    doPut(request) {
+      var secret = request.secret;
+      this.http.put(request.url, {"value":secret.value}, {
+        headers: request.headers
+      }).subscribe((res) => {
+        this.result = secret.value + " was saved with the key -> " + secret.key;
+        this.requests.push(request);
+      }, (err) => {
         this.result = JSON.stringify(err.statusText);
-    });
-  }
+      });
+    }
 
-  doGet(secret) {
-    this.http.get(secret.key, {
-      headers: new HttpHeaders({ 'X-Vault-Token': this.token })
-    }).subscribe((res) => {
+    doGet(request) {
+      var secret = request.secret;
+      this.http.get(request.url, {
+        headers: request.headers
+      }).subscribe((res) => {
         this.result = JSON.stringify(res['data'], null, 2);
-    }, (err) => {
+        this.requests.push(request);
+      }, (err) => {
         this.result = JSON.stringify(err.statusText);
-    });
-  }
+      });
+    }
 
-  doList(secret) {
-    this.http.get(secret.key + "?list=true", {
-      headers: new HttpHeaders({ 'X-Vault-Token': this.token })
-    }).subscribe((res) => {
+    doList(request) {
+      var secret = request.secret;
+      this.http.get(request.url + "?list=true", {
+        headers: request.headers
+      }).subscribe((res) => {
         this.result = JSON.stringify(res['data'].keys, null, 2);
-    }, (err) => {
+        this.requests.push(request);
+      }, (err) => {
         this.result = JSON.stringify(err.statusText);
-    });
-  }
+      });
+    }
 
-  doDelete(secret) {
-    this.http.delete(secret.key, {
-      headers: new HttpHeaders({ 'X-Vault-Token': this.token })
-    }).subscribe((res) => {
+    doDelete(request) {
+      var secret = request.secret;
+      this.http.delete(request.url, {
+        headers: secret.headers
+      }).subscribe((res) => {
         this.result = 'Secret deleted if it existed';
-    }, (err) => {
+        this.requests.push(request);
+      }, (err) => {
         this.result = JSON.stringify(err.statusText);
-    });
-  }
+      });
+    }
 
-  isPut() {
-    return this.verb === "Put"
+    isPut() {
+      return this.verb === "Put"
+    }
+
+    setAction(action: String) {
+      this.verb = action;
+    }
   }
-  
-  setAction(action: String) {
-    this.verb = action;
-  }
-}
