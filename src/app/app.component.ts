@@ -8,25 +8,30 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
-  vaultVersion = "/v1/secret/"
-  baseUrl = 'http://127.0.0.1:8200';
-  key; // used during a put request
-  value; // used during a put request
-  token;
-  headers;
-  result;
-  requests = [];
-  supportedVerbs = [
+  title: string = 'app';
+  vaultVersion: string = "/v1/secret/"
+  baseUrl: string = 'http://127.0.0.1:8200';
+  key: string = ''; // used during a put request
+  value: string = ''; // used during a put request
+  token: string = '';
+  headers: HttpHeaders;
+  result: string;
+  isCorsEnabled: boolean;
+  toggleCORSText: string; // it says 'Disable' when cors are enabled to tell user to disable it.
+  requests: Array<{}> = [];
+  supportedVerbs: Array<string> = [
   'Get',
   'Put',
   'List',
   'Delete'
   ];
   verb: String = this.supportedVerbs[0];
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+    //todo : Load from the session.
+    this.toggleCORSText = 'Enable';
+  }
 
-  prepareRequestObj(verb: string) {
+  private prepareRequestObj(verb: string) {
     return {
       secret: {
         key: this.key,
@@ -61,11 +66,11 @@ export class AppComponent {
       }
     }
 
-    getAbsolutePath(relativePath: string) {
+    private getAbsolutePath(relativePath: string) {
       return this.removeTrailingSlashIfExists(this.baseUrl).concat(this.vaultVersion).concat(relativePath);
     }
 
-    removeTrailingSlashIfExists(path: string) {
+    private removeTrailingSlashIfExists(path: string) {
       if (path.endsWith("/")) {
         var idx = path.lastIndexOf("/");
         return path.substring(0, idx);
@@ -121,11 +126,33 @@ export class AppComponent {
       });
     }
 
-    isPut() {
+    toggleCORS() {
+      var doWhat = !this.isCorsEnabled;
+       var url = this.getAbsolutePath("sys/config/cors");
+       this.http.put(url, {"enabled": doWhat,"allowed_origins": "*"}, {
+         headers: new HttpHeaders({'X-Vault-Token': this.token})
+       }).subscribe((res) => {
+          this.setCORS(doWhat);
+          this.toggleCORSMessage(doWhat);
+          this.result = 'Cors ' + (this.isCorsEnabled ? 'enabled' : 'disabled');
+       }, (err) => {
+          this.result = JSON.stringify(err.statusText);
+       });
+    }
+
+    public isPut() {
       return this.verb === "Put"
     }
 
-    setAction(action: String) {
+    private setAction(action: String) {
       this.verb = action;
+    }
+
+    private setCORS(what: boolean) {
+      this.isCorsEnabled = what;
+    }
+
+    private toggleCORSMessage(isEnabled: boolean) {
+      this.toggleCORSText = (isEnabled ? 'Disable' : 'Enable');
     }
   }
