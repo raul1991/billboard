@@ -4,4 +4,5 @@ export class VaultRequest {
 	headers: HttpHeaders;
 	secret?: {key: string, value: string};
 	token: string = '';
+	response: string;
 }

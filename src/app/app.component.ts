@@ -25,6 +25,7 @@ export class AppComponent {
   'Delete'
   ];
   verb: String = this.supportedVerbs[0];
+  recentRequestsLimit: number = 10; // number of requests to keep.
   constructor(private http: HttpClient) { 
     //todo : Load from the session.
     this.toggleCORSText = 'Enable';
@@ -83,10 +84,11 @@ export class AppComponent {
       this.http.put(request.url, {"value":secret.value}, {
         headers: request.headers
       }).subscribe((res) => {
-        this.result = secret.value + " was saved with the key -> " + secret.key;
-        this.requests.push(request);
+        request.response = this.result = secret.value + " was saved with the key -> " + secret.key;
+        this.addRequest(request);
       }, (err) => {
         this.result = JSON.stringify(err.statusText);
+        this.addRequest(request);
       });
     }
 
@@ -95,10 +97,11 @@ export class AppComponent {
       this.http.get(request.url, {
         headers: request.headers
       }).subscribe((res) => {
-        this.result = JSON.stringify(res['data'], null, 2);
-        this.requests.push(request);
+        request.response = this.result = JSON.stringify(res['data'], null, 2);
+        this.addRequest(request);
       }, (err) => {
         this.result = JSON.stringify(err.statusText);
+        this.addRequest(request);
       });
     }
 
@@ -107,10 +110,11 @@ export class AppComponent {
       this.http.get(request.url + "?list=true", {
         headers: request.headers
       }).subscribe((res) => {
-        this.result = JSON.stringify(res['data'].keys, null, 2);
-        this.requests.push(request);
+        request.response = this.result = JSON.stringify(res['data'].keys, null, 2);
+        this.addRequest(request);
       }, (err) => {
         this.result = JSON.stringify(err.statusText);
+        this.addRequest(request);
       });
     }
 
@@ -119,10 +123,11 @@ export class AppComponent {
       this.http.delete(request.url, {
         headers: request.headers
       }).subscribe((res) => {
-        this.result = 'Secret deleted if it existed';
-        this.requests.push(request);
+        request.response = this.result = 'Secret deleted if it existed';
+        this.addRequest(request);
       }, (err) => {
         this.result = JSON.stringify(err.statusText);
+        this.addRequest(request);
       });
     }
 
@@ -157,10 +162,16 @@ export class AppComponent {
     }
 
     replayRequest(request: VaultRequest) {
+       this.result = request.response;
        this.baseUrl = request.url.split(this.vaultVersion)[0];
        this.headers = new HttpHeaders({'X-Vault-Token': request.token});
        this.key = request.secret.key;
        this.value = request.secret.value;
        this.token = request.token;
+    }
+
+    addRequest(request: VaultRequest) {
+      var idx = (this.requests.length >= this.recentRequestsLimit) ? 0 : this.requests.length++;
+      this.requests[idx] = request;
     }
   }
