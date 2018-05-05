@@ -6,7 +6,7 @@
     <div class="col-3" [hidden]="requests.length === 0">
       <label>Recent requests</label>
       <ul class="list-group">
-        <li *ngFor="let request of requests" href="#" class="list-group-item">
+        <li (click)="replayRequest(request)" *ngFor="let request of requests" href="#" class="list-group-item">
           <small class="float-left text-primary">/{{request.secret.key}}</small> <small class="float-right">[{{request.verb | uppercase}}]</small>
         </li>
       </ul>

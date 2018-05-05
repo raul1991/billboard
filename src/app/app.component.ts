@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { Headers, RequestOptions } from '@angular/http';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-
+import { VaultRequest } from '../app/models/request';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,7 +17,7 @@ export class AppComponent {
   result: string;
   isCorsEnabled: boolean;
   toggleCORSText: string; // it says 'Disable' when cors are enabled to tell user to disable it.
-  requests: Array<{}> = [];
+  requests: Array<VaultRequest> = [];
   supportedVerbs: Array<string> = [
   'Get',
   'Put',
@@ -39,7 +38,8 @@ export class AppComponent {
       },
       verb: verb,
       url: this.getAbsolutePath(this.key),
-      headers: new HttpHeaders({ 'X-Vault-Token': this.token })
+      headers: new HttpHeaders({ 'X-Vault-Token': this.token }),
+      token: this.token || ''
     }
   }
   
@@ -78,7 +78,7 @@ export class AppComponent {
       return path;
     }
 
-    doPut(request) {
+    doPut(request: VaultRequest) {
       var secret = request.secret;
       this.http.put(request.url, {"value":secret.value}, {
         headers: request.headers
@@ -90,7 +90,7 @@ export class AppComponent {
       });
     }
 
-    doGet(request) {
+    doGet(request: VaultRequest) {
       var secret = request.secret;
       this.http.get(request.url, {
         headers: request.headers
@@ -102,7 +102,7 @@ export class AppComponent {
       });
     }
 
-    doList(request) {
+    doList(request: VaultRequest) {
       var secret = request.secret;
       this.http.get(request.url + "?list=true", {
         headers: request.headers
@@ -114,10 +114,10 @@ export class AppComponent {
       });
     }
 
-    doDelete(request) {
+    doDelete(request: VaultRequest) {
       var secret = request.secret;
       this.http.delete(request.url, {
-        headers: secret.headers
+        headers: request.headers
       }).subscribe((res) => {
         this.result = 'Secret deleted if it existed';
         this.requests.push(request);
@@ -154,5 +154,13 @@ export class AppComponent {
 
     private toggleCORSMessage(isEnabled: boolean) {
       this.toggleCORSText = (isEnabled ? 'Disable' : 'Enable');
+    }
+
+    replayRequest(request: VaultRequest) {
+       this.baseUrl = request.url.split(this.vaultVersion)[0];
+       this.headers = new HttpHeaders({'X-Vault-Token': request.token});
+       this.key = request.secret.key;
+       this.value = request.secret.value;
+       this.token = request.token;
     }
   }
