@@ -1,15 +1,16 @@
-<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-  <h5 class="my-0 mr-md-auto font-weight-normal">Vault Viewer</h5>
-</div>
+<app-header></app-header>
 <div class="container">
   <div class="row">
     <div class="col-3" [hidden]="requests.length === 0">
       <label>Recent requests</label>
-      <ul class="list-group">
-        <li (click)="replayRequest(request)" *ngFor="let request of requests" href="#" class="list-group-item">
-          <small class="float-left text-primary">/{{request.secret.key}}</small> <small class="float-right">[{{request.verb | uppercase}}]</small>
-        </li>
-      </ul>
+      <div class="list-group" id="list-tab" role="tablist">
+        <a (click)="replayRequest(request)" *ngFor="let request of requests"
+           class="list-group-item list-group-item-action" id="list-home-list" data-toggle="list" href="#list-home"
+           role="tab" aria-controls="home">
+          <small class="float-left">/{{request.secret.key}}</small>
+          <small class="float-right">[{{request.verb | uppercase}}]</small>
+        </a>
+      </div>
     </div>
     <div class="col-9">
       <form>
@@ -17,42 +18,47 @@
           <label for="exampleInputEmail1">Vault Base Url</label>
           <div class="row">
             <div class="col-10">
-              <input type="url" class="form-control form-control-lg" name="vault_url" id="exampleInputEmail1" aria-describedby="emailHelp"
-              placeholder="Enter url" [value]="baseUrl" [(ngModel)]="baseUrl">
+              <input type="url" class="form-control form-control-lg" name="vault_url" id="exampleInputEmail1"
+                     aria-describedby="emailHelp"
+                     placeholder="Enter url" [value]="baseUrl" [(ngModel)]="baseUrl">
             </div>
             <div class="col-2">
               <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-lg" (click)="performAction(verb)">{{verb}}</button>
-                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <div class="dropdown-menu">
-                  <a *ngFor="let verb of supportedVerbs" class="dropdown-item" href="#" [innerText]="verb" (click)="setAction(verb)">{{verb}}</a>
+                  <a *ngFor="let verb of supportedVerbs" class="dropdown-item" href="#" [innerText]="verb"
+                     (click)="setAction(verb)">{{verb}}</a>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="form-group">
-          <input type="checkbox" (checked)="isCorsEnabled" [disabled]="token.length === 0" (click)="toggleCORS()" name="isCorsEnabled"> {{toggleCORSText}} CORS
+          <input type="checkbox" (checked)="isCorsEnabled" [disabled]="token.length === 0" (click)="toggleCORS()"
+                 name="isCorsEnabled"> {{toggleCORSText}} CORS
         </div>
         <div>
           <label for="secret">Secret Information</label>
           <div class="row">
             <div class="col-6">
               <input type="text" id="secret" class="form-control form-control-lg" name="key" aria-describedby="key"
-              placeholder="Enter key" [value]="key" [(ngModel)]="key">
+                     placeholder="Enter key" [value]="key" [(ngModel)]="key">
             </div>
             <div *ngIf="isPut()" class="col-6">
-              <input type="text" class="form-control form-control-lg" name="value" aria-describedby="value" placeholder="Enter value" [value]="value" [(ngModel)]="value">
+              <input type="text" class="form-control form-control-lg" name="value" aria-describedby="value"
+                     placeholder="Enter value" [value]="value" [(ngModel)]="value">
             </div>
           </div>
         </div>
 
         <div class="form-group">
           <label for="token">Vault token</label>
-          <input name="token" class="form-control" id="token" placeholder="Vault token" [value]="token" 
-          [(ngModel)]="token">
+          <input name="token" class="form-control" id="token" placeholder="Vault token" [value]="token"
+                 [(ngModel)]="token">
         </div>
         <div class="form-group">
           <label for="result">Query result</label>
@@ -61,41 +67,5 @@
       </form>
     </div>
   </div>
-  <footer class="pt-4 my-md-5 pt-md-5 border-top">
-    <div class="row">
-      <div class="col-12 col-md">
-        <img class="mb-2" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="24" height="24">
-        <small class="d-block mb-3 text-muted">© 2017-2018</small>
-      </div>
-      <div class="col-6 col-md">
-        <h5>Features</h5>
-        <ul class="list-unstyled text-small">
-          <li><a class="text-muted" href="#">Cool stuff</a></li>
-          <li><a class="text-muted" href="#">Random feature</a></li>
-          <li><a class="text-muted" href="#">Team feature</a></li>
-          <li><a class="text-muted" href="#">Stuff for developers</a></li>
-          <li><a class="text-muted" href="#">Another one</a></li>
-          <li><a class="text-muted" href="#">Last time</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md">
-        <h5>Resources</h5>
-        <ul class="list-unstyled text-small">
-          <li><a class="text-muted" href="#">Resource</a></li>
-          <li><a class="text-muted" href="#">Resource name</a></li>
-          <li><a class="text-muted" href="#">Another resource</a></li>
-          <li><a class="text-muted" href="#">Final resource</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md">
-        <h5>About</h5>
-        <ul class="list-unstyled text-small">
-          <li><a class="text-muted" href="#">Team</a></li>
-          <li><a class="text-muted" href="#">Locations</a></li>
-          <li><a class="text-muted" href="#">Privacy</a></li>
-          <li><a class="text-muted" href="#">Terms</a></li>
-        </ul>
-      </div>
-    </div>
-  </footer>
+  <app-footer></app-footer>
 </div>
