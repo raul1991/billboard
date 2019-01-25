@@ -1,0 +1,20 @@
+Procfile
+README.md
+
+# Dependency folders
+node_modules/*
+
+# ignore heroku files
+boot.sh
+Procfile
+
+# hidden files
+.idea/*
+.git/*
+.editorconfig
+
+# test folders
+test/*
+
+# Meta files 
+LICENSE
