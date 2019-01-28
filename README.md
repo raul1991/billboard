@@ -1,27 +1,19 @@
 # VaultViewer
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.2.
+A web application to view the vault database.
 
-## Development server
+## How to run it ?
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## How to use it ?
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run your vault database locally, provide the root token or the dev token to access the contents.
 
-## Build
+## Use it with docker
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Run `docker pull cafebabe1991/vault-viewer:v1`
 
-## Running unit tests
+## How to contribute ?
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Solve [issues](https://github.com/raul1991/vault-viewer/issues?q=is%3Aissue+is%3Aopen) or raise some.
