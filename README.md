@@ -12,7 +12,13 @@ Run your vault database locally, provide the root token or the dev token to acce
 
 ## Use it with docker
 
-Run `docker pull cafebabe1991/vault-viewer:v1`
+### Pull the image from the hub 
+
+`docker pull cafebabe1991/vault-viewer:v1`
+
+### Run the downloaded docker image
+
+`docker run -p 9000:9000 -p 9001:9001 cafebabe1991/vault-viewer:v1`
 
 ## How to contribute ?
 
